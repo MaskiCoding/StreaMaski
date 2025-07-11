@@ -49,29 +49,21 @@ A lightweight desktop GUI for watching ad-free Twitch streams using Streamlink.
 3. Click "Watch Stream"
 4. Add streams to Quick Swap for easy switching
 
-## Building Executable
+## Building Your Own Executable (Optional)
 
-To create your own executable:
+If you want to create your own executable from the source code:
 
-```bash
-python build_exe.py
-```
+1. **Install PyInstaller**:
+   ```bash
+   pip install pyinstaller
+   ```
 
-The executable will be created in the `dist/` folder.
+2. **Create executable**:
+   ```bash
+   pyinstaller --onefile --windowed --clean main.py --name "Streamlink-Maski"
+   ```
 
-## Creating GitHub Releases
-
-To create a new release with executable:
-
-**Windows:**
-```powershell
-.\create_release.ps1
-```
-
-**Linux/Mac:**
-```bash
-./create_release.sh
-```
+3. **Find your executable** in the `dist/` folder
 
 ## System Requirements
 
