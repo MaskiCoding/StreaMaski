@@ -10,9 +10,18 @@ This application provides a clean, minimal interface to watch Twitch streams wit
 - 🖼️ **Rose Pine UI**: Beautiful dark theme with smooth animations
 - 📺 **Quality Selection**: Choose from various stream qualities (best, 1080p60, 720p, etc.)
 - 🔄 **Stream Switching**: Easily switch between streams with clean process handling
-- 🔐 **Twitch Integration**: Optional OAuth login to view followed channels
 - ⚡ **Background Processing**: Streams run without terminal windows
 - 🛡️ **Error Handling**: Input validation and user-friendly error messages
+
+## Quick Start
+
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Run the application
+python main.py
+```
 
 ## Installation
 
@@ -47,9 +56,8 @@ pyinstaller --onefile --windowed --icon=icon.ico main.py
 1. **Launch the application**
 2. **Enter Twitch stream URL** (e.g., https://www.twitch.tv/agurin)
 3. **Select stream quality** from the dropdown
-4. **Click "Watch"** to start streaming
-5. **Use "Switch Stream"** to change to a different stream
-6. **Optional**: Login with Twitch to see followed channels
+4. **Click "Watch Stream"** to start streaming
+5. **To switch streams**: Enter a new URL and click "Switch Stream" (automatically stops current stream and starts new one)
 
 ## Contributing
 
