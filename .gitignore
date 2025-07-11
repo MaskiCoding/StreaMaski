@@ -5,7 +5,7 @@ __pycache__/
 *.so
 .Python
 build/
-dist/
+# dist/ - temporarily allowing for v2.2.0 release executable
 *.egg-info/
 *.egg
 
@@ -16,6 +16,16 @@ dist/
 # Application specific
 settings.json
 settings.json.backup
+
+# Development and testing files
+test_*.py
+check_icon.py
+optimize_icon.py
+*_backup.ico
+*_optimized.ico
+
+# Documentation (optional - uncomment to exclude)
+# REFACTORING_SUMMARY.md
 
 # IDE
 .vscode/
