@@ -2,7 +2,7 @@
 Streamlink Maski - Lightweight Twitch Stream Viewer
 A minimal desktop GUI for watching ad-free Twitch streams using Streamlink
 
-Version: 2.0.0
+Version: 2.1.0
 Author: MaskiCoding
 """
 
@@ -22,7 +22,7 @@ from enum import Enum
 
 # Application Constants
 APP_NAME = "Streamlink Maski"
-APP_VERSION = "3.0.0"
+APP_VERSION = "2.1.0"
 WINDOW_SIZE = "480x420"
 SETTINGS_FILE = "settings.json"
 PROXY_URL = "https://eu.luminous.dev"
