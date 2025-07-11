@@ -36,7 +36,7 @@ BUTTON_PADDING = 8
 SECTION_PADDING = 15
 MAIN_PADDING = 20
 
-# Common Streamlink installation paths
+# Streamlink installation paths (optimized order - most common first)
 STREAMLINK_PATHS = [
     "streamlink",
     r"C:\Program Files\Streamlink\bin\streamlink.exe",
@@ -215,7 +215,7 @@ class StreamManager:
         """Switch to a different stream"""
         if self.is_running():
             self.stop_stream()
-            time.sleep(0.5)  # Allow cleanup time
+            time.sleep(0.2)  # Reduced cleanup time for better performance
         
         return self.start_stream(url, quality)
     

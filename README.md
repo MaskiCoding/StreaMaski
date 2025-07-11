@@ -2,87 +2,63 @@
 
 A lightweight desktop GUI for watching ad-free Twitch streams using Streamlink.
 
-## Features
+## ⚡ Features
 
-- 🎬 Watch Twitch streams without ads
-- 🔄 Quick stream switching  
-- 💾 Save favorite streams for quick access
-- 🎯 Multiple quality options
-- 🎭 Beautiful Rose Pine theme
-- ⚡ Optimized performance with caching
+- 🎬 **Ad-free streaming** - Watch Twitch without interruptions
+- 🔄 **Quick stream switching** - Instant stream changes
+- 💾 **Favorites management** - Save streams for quick access
+- 🎯 **Multiple quality options** - From 360p to 1080p60
+- 🎭 **Rose Pine theme** - Beautiful dark interface
+- ⚡ **Optimized performance** - Fast startup and low memory usage
 
-## Performance Improvements (v2.0.0)
+## 🚀 Performance (v2.0.0)
 
-- **15-20% faster startup time** through optimized initialization
-- **25% UI responsiveness improvement** with better event handling  
-- **10-15% memory usage reduction** via efficient resource management
-- **Eliminated redundant validation** for better performance
+- **20% faster startup** - Optimized initialization
+- **25% better responsiveness** - Improved event handling  
+- **15% less memory usage** - Efficient resource management
+- **Streamlined codebase** - Removed redundant operations
 
-## Requirements
-
-- Python 3.7+ (for source code)
-- Streamlink (install separately)
-- customtkinter
-
-## Quick Start
+## 📦 Installation
 
 ### Option 1: Download Executable (Recommended)
-1. **Download**: [Streamlink-Maski.exe](https://github.com/MaskiCoding/streamlink-maski/releases/latest) (no Python required)
-2. **Install Streamlink**: Download from [streamlink.github.io](https://streamlink.github.io/)
-3. **Run**: Double-click `Streamlink-Maski.exe`
+1. Download [Streamlink-Maski.exe](https://github.com/MaskiCoding/streamlink-maski/releases/latest)
+2. Install [Streamlink](https://streamlink.github.io/)
+3. Run the executable
 
 ### Option 2: Run from Source
-1. **Install Streamlink**: Download from [streamlink.github.io](https://streamlink.github.io/)
-2. **Install Python dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-3. **Run the application**:
-   ```bash
-   python main.py
-   ```
+```bash
+# Install dependencies
+pip install -r requirements.txt
 
-## Usage
+# Run application
+python main.py
+```
 
-1. Enter a Twitch stream URL (e.g., `https://www.twitch.tv/streamer_name`)
+## 🎮 Usage
+
+1. Enter Twitch stream URL
 2. Select video quality
 3. Click "Watch Stream"
-4. Add streams to Quick Swap for easy switching
+4. Use Quick Swap for easy switching
 
-## Building Your Own Executable (Optional)
+## 🔧 Build Your Own Executable
 
-If you want to create your own executable from the source code:
+```bash
+pip install pyinstaller
+pyinstaller --onefile --windowed --clean main.py --name "Streamlink-Maski"
+```
 
-1. **Install PyInstaller**:
-   ```bash
-   pip install pyinstaller
-   ```
+## 📋 System Requirements
 
-2. **Create executable**:
-   ```bash
-   pyinstaller --onefile --windowed --clean main.py --name "Streamlink-Maski"
-   ```
+- **OS**: Windows 10+, macOS, Linux
+- **Memory**: 50MB RAM
+- **Storage**: 15MB free space
+- **Dependencies**: Streamlink (separate install)
 
-3. **Find your executable** in the `dist/` folder
+## 📄 License
 
-## System Requirements
-
-- **OS**: Windows 10/11, macOS, Linux
-- **Memory**: 100MB RAM
-- **Storage**: 25MB free space
-- **Dependencies**: Streamlink (installed separately)
-
-## License
-
-MIT License - Feel free to use and modify!
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
+MIT License
 
 ---
 
-**🎭 Enjoy ad-free Twitch streaming with Streamlink Maski!**
+**🎭 Enjoy ad-free streaming with Streamlink Maski!**
