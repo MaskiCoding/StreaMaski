@@ -22,7 +22,7 @@ from enum import Enum
 
 # Application Constants
 APP_NAME = "Streamlink Maski"
-APP_VERSION = "2.0.0"
+APP_VERSION = "3.0.0"
 WINDOW_SIZE = "480x420"
 SETTINGS_FILE = "settings.json"
 PROXY_URL = "https://eu.luminous.dev"
@@ -347,9 +347,9 @@ class StreamManager:
 class URLValidator:
     """Validates Twitch URLs with enhanced validation and caching"""
     
-    # Compiled regex pattern for better performance
+    # Compiled regex pattern for better performance - Fixed to allow 3-character usernames
     TWITCH_URL_PATTERN = re.compile(
-        r'^https?://(?:www\.)?twitch\.tv/([a-zA-Z0-9_]{4,25})/?$',
+        r'^https?://(?:www\.)?twitch\.tv/([a-zA-Z0-9_]{3,25})/?$',
         re.IGNORECASE
     )
     
@@ -632,9 +632,10 @@ class StreamlinkMaski:
         self.stream_manager.set_callback('error', self._on_stream_error)
     
     def _setup_theme(self) -> None:
-        """Setup application theme"""
+        """Setup Rose Pine theme for the entire application"""
         ctk.set_appearance_mode("dark")
-        ctk.set_default_color_theme("blue")
+        # Set custom Rose Pine color theme
+        ctk.set_default_color_theme("blue")  # Base theme, will be overridden
     
     def _setup_window(self) -> None:
         """Setup main window properties"""
@@ -648,13 +649,36 @@ class StreamlinkMaski:
         self.root.grid_columnconfigure(0, weight=1)
     
     def _create_frame(self, parent, fg_color="transparent", **kwargs) -> ctk.CTkFrame:
-        """Utility method to create frames with consistent styling"""
-        return ctk.CTkFrame(parent, fg_color=fg_color, **kwargs)
+        """Utility method to create frames with Rose Pine styling"""
+        if fg_color == "transparent":
+            fg_color = "transparent"
+        elif fg_color == "surface":
+            fg_color = Theme.SURFACE
+        elif fg_color == "overlay":
+            fg_color = Theme.OVERLAY
+        
+        return ctk.CTkFrame(
+            parent, 
+            fg_color=fg_color,
+            border_color=kwargs.get('border_color', Theme.HIGHLIGHT_MED),
+            **kwargs
+        )
     
     def _create_button(self, parent, text: str, command: Callable, 
                       height: int = None, **kwargs) -> ctk.CTkButton:
-        """Utility method to create buttons with consistent styling"""
+        """Utility method to create buttons with Rose Pine styling"""
         height = height or self.ui_config.button_height
+        
+        # Apply Rose Pine colors if not specified
+        if 'fg_color' not in kwargs:
+            kwargs['fg_color'] = Theme.PINE
+        if 'hover_color' not in kwargs:
+            kwargs['hover_color'] = Theme.FOAM
+        if 'text_color' not in kwargs:
+            kwargs['text_color'] = Theme.BASE
+        if 'border_color' not in kwargs:
+            kwargs['border_color'] = Theme.HIGHLIGHT_MED
+            
         return ctk.CTkButton(
             parent,
             text=text,
@@ -685,13 +709,13 @@ class StreamlinkMaski:
         self._create_swap_section()
     
     def _setup_ui(self) -> None:
-        """Setup the main user interface"""
-        # Main frame
+        """Setup the main user interface with Rose Pine theme"""
+        # Main frame with Rose Pine colors
         self.main_frame = self._create_frame(
             self.root,
             fg_color=Theme.SURFACE,
             border_color=Theme.HIGHLIGHT_MED,
-            border_width=1
+            border_width=2
         )
         self.main_frame.grid(row=0, column=0, sticky="nsew", padx=15, pady=15)
         self.main_frame.grid_columnconfigure(0, weight=1)
@@ -726,12 +750,12 @@ class StreamlinkMaski:
         title_label.grid(row=0, column=0, pady=(15, 20))
     
     def _create_url_section(self) -> None:
-        """Create URL input section with improved layout"""
+        """Create URL input section with Rose Pine theme"""
         url_frame = self._create_frame(self.main_frame)
         url_frame.grid(row=1, column=0, sticky="ew", padx=self.ui_config.main_padding, pady=(0, 15))
         url_frame.grid_columnconfigure(0, weight=1)
         
-        # URL label
+        # URL label with Rose Pine colors
         url_label = self._create_label(url_frame, "Twitch Stream URL:")
         url_label.grid(row=0, column=0, sticky="w", pady=(0, 5))
         
@@ -740,7 +764,7 @@ class StreamlinkMaski:
         input_row.grid(row=1, column=0, sticky="ew")
         input_row.grid_columnconfigure(0, weight=1)
         
-        # URL entry with improved placeholder
+        # URL entry with Rose Pine theme
         self.url_entry = ctk.CTkEntry(
             input_row,
             placeholder_text="https://www.twitch.tv/streamer_name",
@@ -748,11 +772,12 @@ class StreamlinkMaski:
             fg_color=Theme.OVERLAY,
             border_color=Theme.HIGHLIGHT_MED,
             text_color=Theme.TEXT,
+            placeholder_text_color=Theme.MUTED,
             height=32
         )
         self.url_entry.grid(row=0, column=0, sticky="ew", padx=(0, 10))
         
-        # Quality selection with all options
+        # Quality selection with Rose Pine theme
         self.quality_var = tk.StringVar(value="best")
         self.quality_combo = ctk.CTkComboBox(
             input_row,
@@ -764,6 +789,9 @@ class StreamlinkMaski:
             button_color=Theme.PINE,
             button_hover_color=Theme.FOAM,
             text_color=Theme.TEXT,
+            dropdown_fg_color=Theme.SURFACE,
+            dropdown_text_color=Theme.TEXT,
+            dropdown_hover_color=Theme.HIGHLIGHT_MED,
             height=32,
             width=120,
             state="readonly"
@@ -844,7 +872,7 @@ class StreamlinkMaski:
             self._create_swap_button_pair(swap_frame, i)
     
     def _create_swap_button_pair(self, parent_frame: ctk.CTkFrame, index: int) -> None:
-        """Create a swap button with its remove button"""
+        """Create a swap button with its remove button using Rose Pine theme"""
         row = index // 2
         col = index % 2
         
@@ -860,7 +888,7 @@ class StreamlinkMaski:
         button_container.grid_columnconfigure(0, weight=1)
         button_container.grid_columnconfigure(1, weight=0)
         
-        # Main swap button
+        # Main swap button with Rose Pine theme
         swap_button = ctk.CTkButton(
             button_container,
             text="Empty Slot",
@@ -869,22 +897,25 @@ class StreamlinkMaski:
             fg_color=Theme.MUTED,
             hover_color=Theme.SUBTLE,
             text_color=Theme.TEXT,
+            border_color=Theme.HIGHLIGHT_MED,
             height=45,
             state="disabled"
         )
         swap_button.grid(row=0, column=0, sticky="ew", padx=(0, 2))
         self.swap_buttons.append(swap_button)
         
-        # Remove button with predefined colors
-        remove_colors = {"fg_color": Theme.LOVE, "hover_color": Theme.ROSE, "text_color": Theme.BASE}
+        # Remove button with Rose Pine theme
         remove_button = ctk.CTkButton(
             button_container,
             text="✕",
             command=lambda idx=index: self._remove_swap_stream(idx),
             font=ctk.CTkFont(size=10),
+            fg_color=Theme.LOVE,
+            hover_color=Theme.ROSE,
+            text_color=Theme.BASE,
+            border_color=Theme.LOVE,
             height=45,
-            width=25,
-            **remove_colors
+            width=25
         )
         remove_button.grid(row=0, column=1, sticky="ew")
         remove_button.grid_remove()
@@ -908,22 +939,24 @@ class StreamlinkMaski:
         self._update_swap_buttons()
     
     def _update_swap_buttons(self) -> None:
-        """Update swap buttons display with better organization"""
+        """Update swap buttons display with Rose Pine theme"""
         streams = self.quick_swap_manager.get_streams()
         
-        # Define button states for better performance
+        # Define button states with Rose Pine colors
         active_state = {
             "state": "normal",
             "fg_color": Theme.PINE,
             "hover_color": Theme.FOAM,
-            "text_color": Theme.BASE
+            "text_color": Theme.BASE,
+            "border_color": Theme.PINE
         }
         
         inactive_state = {
             "state": "disabled",
             "fg_color": Theme.MUTED,
             "hover_color": Theme.SUBTLE,
-            "text_color": Theme.TEXT
+            "text_color": Theme.TEXT,
+            "border_color": Theme.HIGHLIGHT_MED
         }
         
         for i, button in enumerate(self.swap_buttons):
