@@ -2,7 +2,7 @@
 Streamlink Maski - Lightweight Twitch Stream Viewer
 A minimal desktop GUI for watching ad-free Twitch streams using Streamlink
 
-Version: 2.2.0
+Version: 2.3.0
 Author: MaskiCoding
 """
 
@@ -30,7 +30,7 @@ except ImportError:
 
 # Application Constants
 APP_NAME = "Streamlink Maski"
-APP_VERSION = "2.2.0"
+APP_VERSION = "2.3.0"
 WINDOW_SIZE = "480x420"
 SETTINGS_FILE = "settings.json"
 PROXY_URL = "https://eu.luminous.dev"
@@ -749,7 +749,7 @@ class StreamlinkMaski:
             
             # Set application user model ID for better taskbar integration
             try:
-                ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("MaskiCoding.StreamlinkMaski.2.2.0")
+                ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("MaskiCoding.StreamlinkMaski.2.3.0")
             except:
                 pass
             
