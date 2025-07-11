@@ -2,7 +2,7 @@
 Streamlink Maski - Lightweight Twitch Stream Viewer
 A minimal desktop GUI for watching ad-free Twitch streams using Streamlink
 
-Version: 2.1.0
+Version: 2.2.0
 Author: MaskiCoding
 """
 
@@ -19,10 +19,18 @@ from typing import List, Tuple, Optional, Callable, Dict, Any
 from dataclasses import dataclass
 from enum import Enum
 
+# Windows-specific imports
+try:
+    import ctypes
+    from ctypes import wintypes
+    WINDOWS_AVAILABLE = True
+except ImportError:
+    WINDOWS_AVAILABLE = False
+
 
 # Application Constants
 APP_NAME = "Streamlink Maski"
-APP_VERSION = "2.1.0"
+APP_VERSION = "2.2.0"
 WINDOW_SIZE = "480x420"
 SETTINGS_FILE = "settings.json"
 PROXY_URL = "https://eu.luminous.dev"
@@ -84,6 +92,13 @@ class Theme:
     PINE = "#31748f"
     FOAM = "#9ccfd8"
     HIGHLIGHT_MED = "#403d52"
+    
+    # Predefined color schemes for different UI elements
+    BUTTON_PRIMARY = {"fg_color": PINE, "hover_color": FOAM, "text_color": BASE}
+    BUTTON_DANGER = {"fg_color": LOVE, "hover_color": ROSE, "text_color": BASE}
+    BUTTON_WARNING = {"fg_color": GOLD, "hover_color": ROSE, "text_color": BASE}
+    BUTTON_DISABLED = {"fg_color": MUTED, "hover_color": SUBTLE, "text_color": TEXT}
+    BUTTON_REMOVE = {"fg_color": LOVE, "hover_color": ROSE, "text_color": BASE, "border_color": LOVE}
 
 
 class ProcessUtils:
@@ -282,7 +297,7 @@ class StreamManager:
             stdout, stderr = self.current_process.communicate()
             
             if self.current_process.returncode != 0 and not self.manually_stopped:
-                error_msg = self._parse_error_message(stderr)
+                error_msg = self._parse_error_message(stderr, stdout)
                 self._emit('error', f"Stream failed: {error_msg}")
                 
         except Exception as e:
@@ -297,12 +312,19 @@ class StreamManager:
         quality = cmd[3] if len(cmd) > 3 else "best"  # Quality is last parameter
         return url, quality
     
-    def _parse_error_message(self, stderr: bytes) -> str:
+    def _parse_error_message(self, stderr: bytes, stdout: bytes = b"") -> str:
         """Parse and clean error messages for better user experience"""
-        if not stderr:
+        if not stderr and not stdout:
             return "Unknown error occurred"
         
-        error_msg = stderr.decode('utf-8', errors='ignore').strip()
+        # Combine stderr and stdout for comprehensive error checking
+        error_msg = ""
+        if stderr:
+            error_msg += stderr.decode('utf-8', errors='ignore').strip()
+        if stdout:
+            stdout_str = stdout.decode('utf-8', errors='ignore').strip()
+            if stdout_str:
+                error_msg += "\n" + stdout_str
         
         # Map of error patterns to user-friendly messages
         error_mappings = {
@@ -310,7 +332,10 @@ class StreamManager:
             "Unable to open URL": "Unable to connect to stream",
             "Authentication failed": "Stream requires authentication",
             "Network is unreachable": "Network connection error",
-            "Connection timed out": "Connection timeout - try again"
+            "Connection timed out": "Connection timeout - try again",
+            "404 Client Error": "Stream not found or offline",
+            "403 Client Error": "Stream is subscriber-only or restricted",
+            "500 Server Error": "Twitch server error - try again later"
         }
         
         # Check for known error patterns
@@ -318,7 +343,7 @@ class StreamManager:
             if pattern in error_msg:
                 return friendly_msg
         
-        return error_msg
+        return error_msg if error_msg else "Unknown error occurred"
     
     def _close_media_players(self) -> None:
         """Close media player windows with improved error handling"""
@@ -644,9 +669,103 @@ class StreamlinkMaski:
         self.root.configure(fg_color=Theme.BASE)
         self.root.protocol("WM_DELETE_WINDOW", self._on_closing)
         
+        # Set custom icon for both window and taskbar
+        self._setup_icon()
+        
         # Configure main grid
         self.root.grid_rowconfigure(0, weight=1)
         self.root.grid_columnconfigure(0, weight=1)
+    
+    def _setup_icon(self) -> None:
+        """Setup application icon for window and taskbar"""
+        icon_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ghost_play_icon.ico")
+        if not os.path.exists(icon_path):
+            print(f"Icon file not found: {icon_path}")
+            return
+        
+        try:
+            # Set window icon with proper error handling
+            self.root.iconbitmap(icon_path)
+            
+            # Additional taskbar icon setup for Windows
+            if os.name == 'nt':
+                self._setup_taskbar_icon(icon_path)
+            
+            print(f"Icon loaded successfully: {icon_path}")
+                
+        except Exception as e:
+            print(f"Could not load icon: {e}")
+            # Try alternative icon setting method
+            try:
+                self.root.iconbitmap(default=icon_path)
+                print("Icon set using alternative method")
+            except Exception as e2:
+                print(f"Alternative icon method also failed: {e2}")
+    
+    def _setup_taskbar_icon(self, icon_path: str) -> None:
+        """Setup taskbar icon on Windows"""
+        if not WINDOWS_AVAILABLE:
+            print("Windows ctypes not available for taskbar icon")
+            return
+            
+        try:
+            # Wait for the window to be fully created and then set icon with a longer delay
+            # to ensure proper rendering
+            self.root.after(200, lambda: self._set_taskbar_icon_delayed(icon_path))
+            
+        except Exception as e:
+            print(f"Could not setup taskbar icon: {e}")
+    
+    def _set_taskbar_icon_delayed(self, icon_path: str) -> None:
+        """Set taskbar icon with delay to ensure window is ready"""
+        if not WINDOWS_AVAILABLE:
+            return
+            
+        try:
+            # Get window handle
+            hwnd = int(self.root.wm_frame(), 16)
+            
+            # Load multiple icon sizes for better quality
+            # Load small icon (16x16) for window title bar
+            small_icon = ctypes.windll.user32.LoadImageW(
+                0, icon_path, 1, 16, 16, 0x00000010 | 0x00008000  # LR_LOADFROMFILE | LR_SHARED
+            )
+            
+            # Load large icon (32x32) for taskbar
+            large_icon = ctypes.windll.user32.LoadImageW(
+                0, icon_path, 1, 32, 32, 0x00000010 | 0x00008000  # LR_LOADFROMFILE | LR_SHARED
+            )
+            
+            # Load extra large icon (48x48) for alt-tab
+            xlarge_icon = ctypes.windll.user32.LoadImageW(
+                0, icon_path, 1, 48, 48, 0x00000010 | 0x00008000  # LR_LOADFROMFILE | LR_SHARED
+            )
+            
+            if small_icon:
+                ctypes.windll.user32.SendMessageW(hwnd, 0x0080, 0, small_icon)  # WM_SETICON, ICON_SMALL
+            
+            if large_icon:
+                ctypes.windll.user32.SendMessageW(hwnd, 0x0080, 1, large_icon)  # WM_SETICON, ICON_BIG
+            
+            # Set application user model ID for better taskbar integration
+            try:
+                ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("MaskiCoding.StreamlinkMaski.2.2.0")
+            except:
+                pass
+            
+            # Alternative method: Try to set taskbar icon using different approach
+            try:
+                # Get the best available icon size
+                best_icon = xlarge_icon or large_icon or small_icon
+                if best_icon:
+                    # Set class icon
+                    ctypes.windll.user32.SetClassLongPtrW(hwnd, -14, best_icon)  # GCLP_HICON
+                    ctypes.windll.user32.SetClassLongPtrW(hwnd, -34, best_icon)  # GCLP_HICONSM
+            except:
+                pass
+            
+        except Exception as e:
+            print(f"Could not set delayed taskbar icon: {e}")
     
     def _create_frame(self, parent, fg_color="transparent", **kwargs) -> ctk.CTkFrame:
         """Utility method to create frames with Rose Pine styling"""
@@ -657,27 +776,38 @@ class StreamlinkMaski:
         elif fg_color == "overlay":
             fg_color = Theme.OVERLAY
         
+        # Set default border_color if not provided
+        if 'border_color' not in kwargs:
+            kwargs['border_color'] = Theme.HIGHLIGHT_MED
+        
         return ctk.CTkFrame(
             parent, 
             fg_color=fg_color,
-            border_color=kwargs.get('border_color', Theme.HIGHLIGHT_MED),
             **kwargs
         )
     
     def _create_button(self, parent, text: str, command: Callable, 
-                      height: int = None, **kwargs) -> ctk.CTkButton:
+                      height: int = None, style: str = "primary", **kwargs) -> ctk.CTkButton:
         """Utility method to create buttons with Rose Pine styling"""
         height = height or self.ui_config.button_height
         
-        # Apply Rose Pine colors if not specified
-        if 'fg_color' not in kwargs:
-            kwargs['fg_color'] = Theme.PINE
-        if 'hover_color' not in kwargs:
-            kwargs['hover_color'] = Theme.FOAM
-        if 'text_color' not in kwargs:
-            kwargs['text_color'] = Theme.BASE
-        if 'border_color' not in kwargs:
-            kwargs['border_color'] = Theme.HIGHLIGHT_MED
+        # Get predefined color scheme
+        color_schemes = {
+            "primary": Theme.BUTTON_PRIMARY,
+            "danger": Theme.BUTTON_DANGER, 
+            "warning": Theme.BUTTON_WARNING,
+            "disabled": Theme.BUTTON_DISABLED,
+            "remove": Theme.BUTTON_REMOVE
+        }
+        
+        colors = color_schemes.get(style, Theme.BUTTON_PRIMARY)
+        
+        # Merge with any provided kwargs
+        button_kwargs = {**colors, **kwargs}
+        
+        # Set default border_color if not provided
+        if 'border_color' not in button_kwargs:
+            button_kwargs['border_color'] = Theme.HIGHLIGHT_MED
             
         return ctk.CTkButton(
             parent,
@@ -685,7 +815,7 @@ class StreamlinkMaski:
             command=command,
             height=height,
             font=ctk.CTkFont(size=12, weight="bold"),
-            **kwargs
+            **button_kwargs
         )
     
     def _create_label(self, parent, text: str, size: int = 12, **kwargs) -> ctk.CTkLabel:
@@ -722,22 +852,6 @@ class StreamlinkMaski:
         
         # Create UI elements
         self._create_ui_elements()
-    
-    def _create_standard_button(self, parent, text: str, command: Callable, 
-                              height: int = None, colors: Dict[str, str] = None, **kwargs) -> ctk.CTkButton:
-        """Create button with standard styling and custom colors"""
-        height = height or self.ui_config.button_height
-        colors = colors or {"fg_color": Theme.PINE, "hover_color": Theme.FOAM, "text_color": Theme.BASE}
-        
-        return ctk.CTkButton(
-            parent,
-            text=text,
-            command=command,
-            height=height,
-            font=ctk.CTkFont(size=12, weight="bold"),
-            **colors,
-            **kwargs
-        )
     
     def _create_title(self) -> None:
         """Create title label with version info"""
@@ -805,7 +919,7 @@ class StreamlinkMaski:
         self.button_frame.grid_columnconfigure(0, weight=1)
         
         # Watch button
-        self.watch_button = self._create_standard_button(
+        self.watch_button = self._create_button(
             self.button_frame,
             text="🎬 Watch Stream",
             command=self._toggle_stream
@@ -818,23 +932,19 @@ class StreamlinkMaski:
         self.control_row.grid_columnconfigure(0, weight=1)
         self.control_row.grid_columnconfigure(1, weight=1)
         
-        # Color schemes for different button types
-        stop_colors = {"fg_color": Theme.LOVE, "hover_color": Theme.ROSE, "text_color": Theme.BASE}
-        switch_colors = {"fg_color": Theme.GOLD, "hover_color": Theme.ROSE, "text_color": Theme.BASE}
-        
-        self.stop_button = self._create_standard_button(
+        self.stop_button = self._create_button(
             self.control_row,
             text="⏹ Stop Stream",
             command=self._stop_stream,
-            colors=stop_colors
+            style="danger"
         )
         self.stop_button.grid(row=0, column=0, sticky="ew", padx=(0, self.ui_config.padding // 2))
         
-        self.switch_button = self._create_standard_button(
+        self.switch_button = self._create_button(
             self.control_row,
             text="🔄 Switch Stream",
             command=self._switch_stream,
-            colors=switch_colors
+            style="warning"
         )
         self.switch_button.grid(row=0, column=1, sticky="ew", padx=(self.ui_config.padding // 2, 0))
         
@@ -848,7 +958,7 @@ class StreamlinkMaski:
         manage_frame.grid_columnconfigure(0, weight=1)
         
         # Add button with improved text
-        self.add_button = self._create_standard_button(
+        self.add_button = self._create_button(
             manage_frame,
             text="➕ Add to Quick Swap",
             command=self._add_stream,
@@ -905,15 +1015,11 @@ class StreamlinkMaski:
         self.swap_buttons.append(swap_button)
         
         # Remove button with Rose Pine theme
-        remove_button = ctk.CTkButton(
+        remove_button = self._create_button(
             button_container,
             text="✕",
             command=lambda idx=index: self._remove_swap_stream(idx),
-            font=ctk.CTkFont(size=10),
-            fg_color=Theme.LOVE,
-            hover_color=Theme.ROSE,
-            text_color=Theme.BASE,
-            border_color=Theme.LOVE,
+            style="remove",
             height=45,
             width=25
         )
@@ -942,20 +1048,16 @@ class StreamlinkMaski:
         """Update swap buttons display with Rose Pine theme"""
         streams = self.quick_swap_manager.get_streams()
         
-        # Define button states with Rose Pine colors
+        # Define button states using theme constants
         active_state = {
             "state": "normal",
-            "fg_color": Theme.PINE,
-            "hover_color": Theme.FOAM,
-            "text_color": Theme.BASE,
+            **Theme.BUTTON_PRIMARY,
             "border_color": Theme.PINE
         }
         
         inactive_state = {
             "state": "disabled",
-            "fg_color": Theme.MUTED,
-            "hover_color": Theme.SUBTLE,
-            "text_color": Theme.TEXT,
+            **Theme.BUTTON_DISABLED,
             "border_color": Theme.HIGHLIGHT_MED
         }
         
@@ -981,13 +1083,13 @@ class StreamlinkMaski:
         url = self.url_entry.get().strip()
         
         if not url:
-            messagebox.showwarning("Warning", "Please enter a stream URL")
+            self._show_warning("Please enter a stream URL")
             return None, None
         
         # Validate URL format
         is_valid, error_msg = URLValidator.validate(url)
         if not is_valid:
-            messagebox.showerror("Invalid URL", error_msg)
+            self._show_validation_error(error_msg)
             return None, None
         
         quality = self.quality_var.get()
@@ -995,34 +1097,30 @@ class StreamlinkMaski:
     
     def _save_stream_settings(self, url: str, quality: str) -> bool:
         """Save stream settings - URL is already validated"""
-        # Save current settings
         self.settings_manager.set("last_url", url)
         self.settings_manager.set("last_quality", quality)
         return True
-    def _validate_and_execute_stream_action(self, action_name: str, action_func: Callable[[str, str], bool]) -> bool:
-        """Common validation and execution pattern for stream actions"""
+    
+    def _execute_stream_action(self, action_func: Callable[[str, str], bool]) -> bool:
+        """Execute stream action with validation"""
         url, quality = self._get_validated_url_and_quality()
         if not url or not quality:
             return False
         
-        # Save settings (URL is already validated)
-        if not self._save_stream_settings(url, quality):
-            return False
-        
-        # Execute the action
+        self._save_stream_settings(url, quality)
         return action_func(url, quality)
     
     def _watch_stream(self) -> None:
-        """Watch stream with comprehensive validation and error handling"""
-        self._validate_and_execute_stream_action("watch", self.stream_manager.start_stream)
+        """Watch stream with validation"""
+        self._execute_stream_action(self.stream_manager.start_stream)
     
     def _stop_stream(self) -> None:
-        """Stop stream with proper cleanup"""
+        """Stop stream"""
         self.stream_manager.stop_stream()
     
     def _switch_stream(self) -> None:
         """Switch to new stream with validation"""
-        self._validate_and_execute_stream_action("switch", self.stream_manager.switch_stream)
+        self._execute_stream_action(self.stream_manager.switch_stream)
     
     def _show_validation_error(self, message: str) -> None:
         """Show validation error message consistently"""
@@ -1032,52 +1130,64 @@ class StreamlinkMaski:
         """Show warning message consistently"""
         messagebox.showwarning("Warning", message)
     
+    def _show_error(self, title: str, message: str) -> None:
+        """Show error message consistently"""
+        messagebox.showerror(title, message)
+    
+    def _manage_swap_stream(self, action: str, url: str = None, index: int = None) -> None:
+        """Unified swap stream management"""
+        if action == "add":
+            url, _ = self._get_validated_url_and_quality()
+            if not url:
+                return
+            
+            normalized_url = URLValidator.normalize_url(url)
+            
+            if self.quick_swap_manager.has_stream(normalized_url):
+                return  # Already exists
+            
+            if self.quick_swap_manager.is_full():
+                self._show_warning(f"All {MAX_SWAP_STREAMS} quick swap slots are occupied. Remove a stream to add a new one.")
+                return
+            
+            if self.quick_swap_manager.add_stream(normalized_url):
+                self._update_swap_buttons()
+                
+        elif action == "load" and index is not None:
+            if not self.quick_swap_manager.is_valid_index(index):
+                return
+            
+            url = self.quick_swap_manager.get_stream(index)
+            if not url:
+                return
+            
+            # Update UI and start/switch stream
+            self.url_entry.delete(0, tk.END)
+            self.url_entry.insert(0, url)
+            self.settings_manager.set("last_url", url)
+            
+            quality = self.quality_var.get()
+            if self.stream_manager.is_running():
+                self.stream_manager.switch_stream(url, quality)
+            else:
+                self.stream_manager.start_stream(url, quality)
+                
+        elif action == "remove" and index is not None:
+            if self.quick_swap_manager.is_valid_index(index):
+                if self.quick_swap_manager.remove_by_index(index):
+                    self._update_swap_buttons()
+    
     def _add_stream(self) -> None:
-        """Add current stream to quick swap with improved validation"""
-        url, _ = self._get_validated_url_and_quality()
-        if not url:
-            return
-        
-        normalized_url = URLValidator.normalize_url(url)
-        
-        # Check constraints
-        if self.quick_swap_manager.has_stream(normalized_url):
-            return  # Silently ignore if already exists
-        
-        if self.quick_swap_manager.is_full():
-            self._show_warning(f"All {MAX_SWAP_STREAMS} quick swap slots are occupied. Remove a stream to add a new one.")
-            return
-        
-        # Add stream and update UI
-        if self.quick_swap_manager.add_stream(normalized_url):
-            self._update_swap_buttons()
+        """Add current stream to quick swap"""
+        self._manage_swap_stream("add")
     
     def _load_swap_stream(self, index: int) -> None:
-        """Load a stream from quick swap with automatic playback"""
-        if not self.quick_swap_manager.is_valid_index(index):
-            return
-        
-        url = self.quick_swap_manager.get_stream(index)
-        if not url:
-            return
-        
-        # Update UI with selected stream
-        self.url_entry.delete(0, tk.END)
-        self.url_entry.insert(0, url)
-        self.settings_manager.set("last_url", url)
-        
-        # Auto-start or switch stream
-        quality = self.quality_var.get()
-        if self.stream_manager.is_running():
-            self.stream_manager.switch_stream(url, quality)
-        else:
-            self.stream_manager.start_stream(url, quality)
+        """Load a stream from quick swap"""
+        self._manage_swap_stream("load", index=index)
     
     def _remove_swap_stream(self, index: int) -> None:
-        """Remove a stream from quick swap without confirmation"""
-        if self.quick_swap_manager.is_valid_index(index):
-            if self.quick_swap_manager.remove_by_index(index):
-                self._update_swap_buttons()
+        """Remove a stream from quick swap"""
+        self._manage_swap_stream("remove", index=index)
     
     def _update_ui_state(self, is_streaming: bool, streamer_name: str = "") -> None:
         """Update UI state based on streaming status"""
@@ -1092,19 +1202,30 @@ class StreamlinkMaski:
             self.control_row.grid_remove()
             self.root.title(APP_NAME)
     
+    def _handle_stream_event(self, event: str, *args) -> None:
+        """Handle all stream events"""
+        if event == "started":
+            url, quality = args
+            streamer_name = URLValidator.extract_streamer_name(url)
+            self._update_ui_state(True, streamer_name)
+        elif event == "stopped":
+            self._update_ui_state(False)
+        elif event == "error":
+            error = args[0]
+            self._update_ui_state(False)
+            self._show_error("Stream Error", f"Failed to start stream:\n{error}")
+    
     def _on_stream_started(self, url: str, quality: str) -> None:
-        """Handle stream started event with UI updates"""
-        streamer_name = URLValidator.extract_streamer_name(url)
-        self._update_ui_state(True, streamer_name)
+        """Handle stream started event"""
+        self._handle_stream_event("started", url, quality)
     
     def _on_stream_stopped(self) -> None:
-        """Handle stream stopped event with UI cleanup"""
-        self._update_ui_state(False)
+        """Handle stream stopped event"""
+        self._handle_stream_event("stopped")
     
     def _on_stream_error(self, error: str) -> None:
-        """Handle stream error event with user-friendly messages"""
-        self._update_ui_state(False)
-        messagebox.showerror("Stream Error", f"Failed to start stream:\n{error}")
+        """Handle stream error event"""
+        self._handle_stream_event("error", error)
     
     def _safe_cleanup_and_exit(self) -> None:
         """Safely cleanup resources and exit application"""
@@ -1127,7 +1248,7 @@ class StreamlinkMaski:
             self.root.mainloop()
         except Exception as e:
             print(f"Critical error: {e}")
-            messagebox.showerror("Critical Error", f"Application encountered a critical error:\n{e}")
+            self._show_error("Critical Error", f"Application encountered a critical error:\n{e}")
 
 
 def main():
