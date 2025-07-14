@@ -14,14 +14,14 @@ A lightweight desktop GUI for watching **ad-free Twitch streams** using Streamli
 ## 🚀 Getting Started
 
 ### 📥 Download (Recommended)
-1. Go to [Releases](https://github.com/MaskiCoding/streamaski/releases)
+1. Go to [Releases](https://github.com/MaskiCoding/StreaMaski/releases)
 2. Download the latest `StreaMaski.exe`
 3. Run the executable and enjoy ad-free streaming!
 
 ### 🔧 Run from Source
 ```bash
-git clone https://github.com/MaskiCoding/streamaski.git
-cd streamaski
+git clone https://github.com/MaskiCoding/StreaMaski.git
+cd StreaMaski
 pip install -r requirements.txt
 python main.py
 ```
