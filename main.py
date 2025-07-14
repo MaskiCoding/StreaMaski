@@ -2,7 +2,7 @@
 StreaMaski - Lightweight Twitch Stream Viewer
 A minimal desktop GUI for watching ad-free Twitch streams using Streamlink
 
-Version: 3.0.0
+Version: 3.0.1
 Author: MaskiCoding
 """
 
@@ -31,7 +31,7 @@ except ImportError:
 
 # Application Constants
 APP_NAME = "StreaMaski"
-APP_VERSION = "3.0.0"
+APP_VERSION = "3.0.1"
 WINDOW_SIZE = "480x420"
 PROXY_URL = "https://eu.luminous.dev"
 MAX_SWAP_STREAMS = 4
