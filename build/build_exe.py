@@ -13,11 +13,11 @@ from pathlib import Path
 # Build configuration
 APP_NAME = "Streamlink Maski"
 APP_VERSION = "3.0.0"
-MAIN_SCRIPT = "main.py"
-ICON_FILE = "Icon.ico"
-BUILD_DIR = "build"
-DIST_DIR = "dist"
-SPEC_FILE = "streamlink_maski.spec"
+MAIN_SCRIPT = "../main.py"
+ICON_FILE = "../Icon.ico"
+BUILD_DIR = "../build"
+DIST_DIR = "../dist"
+SPEC_FILE = "StreamlinkMaski.spec"
 
 # PyInstaller options
 USE_SPEC_FILE = True
@@ -133,11 +133,11 @@ def create_release_package():
     print(f"   ✓ Copied executable to {release_dir}")
     
     # Copy documentation files
-    docs_to_copy = ["README.md", "CHANGELOG.md", "RELEASE_NOTES.md"]
+    docs_to_copy = ["../README.md", "../docs/CHANGELOG.md", "../docs/RELEASE_NOTES.md"]
     for doc in docs_to_copy:
         if os.path.exists(doc):
-            shutil.copy2(doc, release_dir / doc)
-            print(f"   ✓ Copied {doc}")
+            shutil.copy2(doc, release_dir / os.path.basename(doc))
+            print(f"   ✓ Copied {os.path.basename(doc)}")
     
     # Create installation instructions
     install_instructions = f"""# Streamlink Maski v{APP_VERSION} - Installation Instructions
@@ -199,7 +199,7 @@ def main():
     
     # Check if we're in the right directory
     if not os.path.exists(MAIN_SCRIPT):
-        print(f"❌ {MAIN_SCRIPT} not found. Please run this script from the project directory.")
+        print(f"❌ {MAIN_SCRIPT} not found. Please run this script from the build directory.")
         return False
     
     # Step 1: Clean previous builds

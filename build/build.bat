@@ -30,6 +30,7 @@ if %errorlevel% neq 0 (
 
 echo.
 echo Starting build process...
+cd /d "%~dp0"
 python build_exe.py
 
 if %errorlevel% equ 0 (

@@ -27,6 +27,7 @@ jobs:
         
     - name: Build executable
       run: |
+        cd build
         python build_exe.py
         
     - name: Upload artifact
@@ -41,8 +42,8 @@ jobs:
       with:
         files: |
           StreamlinkMaski_v*.zip
-          dist/StreamlinkMaski.exe
-        body_path: RELEASE_NOTES.md
+          ../dist/StreamlinkMaski.exe
+        body_path: docs/RELEASE_NOTES.md
         draft: false
         prerelease: false
       env:

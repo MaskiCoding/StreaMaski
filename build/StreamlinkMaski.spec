@@ -2,10 +2,10 @@
 
 
 a = Analysis(
-    ['main.py'],
+    ['../main.py'],
     pathex=[],
     binaries=[],
-    datas=[('Icon.ico', '.')],
+    datas=[('../Icon.ico', '.')],
     hiddenimports=['customtkinter', 'tkinter', 'requests', 'subprocess', 'threading', 'json', 'os', 'sys', 're', 'contextlib', 'weakref', 'enum', 'typing'],
     hookspath=[],
     hooksconfig={},
@@ -35,5 +35,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['Icon.ico'],
+    icon=['../Icon.ico'],
 )

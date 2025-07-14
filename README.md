@@ -85,6 +85,27 @@ pip install -r requirements.txt
 python main.py
 ```
 
+## 🚀 Getting Started
+
+### 📥 Option 1: Download Release (Recommended)
+1. Go to [Releases](https://github.com/MaskiCoding/streamlink-maski/releases)
+2. Download `StreamlinkMaski_v3.0.0_Windows.zip`
+3. Extract and run `StreamlinkMaski.exe`
+4. Install [Streamlink](https://streamlink.github.io/install.html) when prompted
+
+### 🔧 Option 2: Run from Source
+```bash
+# Clone the repository
+git clone https://github.com/MaskiCoding/streamlink-maski.git
+cd streamlink-maski
+
+# Setup dependencies
+python setup.py
+
+# Run the application
+python main.py
+```
+
 ## 🎮 How to Use
 
 ### 🎬 Basic Streaming
@@ -208,6 +229,58 @@ The application features a beautiful **Rose Pine** dark theme with:
 - Ensure you have a compatible video player installed (VLC recommended)
 - Check if Streamlink can access your video player
 - Try running `streamlink --version` in command prompt
+
+## 🔨 Building from Source
+
+Want to build the executable yourself? It's easy!
+
+### Quick Build (Windows)
+```bash
+# Clone the repository
+git clone https://github.com/MaskiCoding/streamlink-maski.git
+cd streamlink-maski
+
+# Run the build script
+cd build
+build.bat
+```
+
+### Manual Build
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Build executable
+cd build
+python build_exe.py
+```
+
+The executable will be created in the `dist/` folder, and a complete release package will be generated as `StreamlinkMaski_v3.0.0_Windows.zip`.
+
+For detailed build instructions, see [`build/BUILD.md`](build/BUILD.md).
+
+## 📁 Repository Structure
+
+```
+streamlink-maski/
+├── main.py              # Main application
+├── Icon.ico             # Application icon
+├── requirements.txt     # Dependencies
+├── README.md           # This file
+├── .gitignore          # Git ignore rules
+├── docs/               # Documentation
+│   ├── CHANGELOG.md    # Version history
+│   └── RELEASE_NOTES.md # Release information
+├── build/              # Build system
+│   ├── build_exe.py    # Build script
+│   ├── build.bat       # Windows build script
+│   ├── StreamlinkMaski.spec # PyInstaller config
+│   ├── version_info.py # Windows version info
+│   └── BUILD.md        # Build documentation
+└── .github/            # GitHub Actions
+    └── workflows/
+        └── build.yml   # Automated builds
+```
 
 ## 🤝 Contributing
 
