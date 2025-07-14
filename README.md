@@ -1,4 +1,4 @@
-# 🎭 Streamlink Maski
+# 🎭 StreaMaski
 
 A lightweight desktop GUI for watching **ad-free Twitch streams** using Streamlink with a beautiful Rose Pine theme.
 
@@ -14,14 +14,14 @@ A lightweight desktop GUI for watching **ad-free Twitch streams** using Streamli
 ## 🚀 Getting Started
 
 ### 📥 Download (Recommended)
-1. Go to [Releases](https://github.com/MaskiCoding/streamlink-maski/releases)
-2. Download the latest `StreamlinkMaski.exe`
+1. Go to [Releases](https://github.com/MaskiCoding/streamaski/releases)
+2. Download the latest `StreaMaski.exe`
 3. Run the executable and enjoy ad-free streaming!
 
 ### 🔧 Run from Source
 ```bash
-git clone https://github.com/MaskiCoding/streamlink-maski.git
-cd streamlink-maski
+git clone https://github.com/MaskiCoding/streamaski.git
+cd streamaski
 pip install -r requirements.txt
 python main.py
 ```
@@ -73,6 +73,6 @@ MIT License - See [LICENSE](LICENSE) file for details.
 
 ---
 
-**🎭 Enjoy ad-free Twitch streaming with Streamlink Maski!**
+**🎭 Enjoy ad-free Twitch streaming with StreaMaski!**
 
 *Built with ❤️ by [MaskiCoding](https://github.com/MaskiCoding)*

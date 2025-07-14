@@ -1,5 +1,5 @@
 """
-Streamlink Maski - Lightweight Twitch Stream Viewer
+StreaMaski - Lightweight Twitch Stream Viewer
 A minimal desktop GUI for watching ad-free Twitch streams using Streamlink
 
 Version: 3.0.0
@@ -30,7 +30,7 @@ except ImportError:
     WINDOWS_AVAILABLE = False
 
 # Application Constants
-APP_NAME = "Streamlink Maski"
+APP_NAME = "StreaMaski"
 APP_VERSION = "3.0.0"
 WINDOW_SIZE = "480x420"
 PROXY_URL = "https://eu.luminous.dev"
@@ -977,7 +977,7 @@ class QuickSwapManager:
         self.clear_cache()
 
 
-class StreamlinkMaski:
+class StreaMaski:
     """Main application class with improved organization and error handling"""
     
     def __init__(self):
@@ -1689,7 +1689,7 @@ class StreamlinkMaski:
 def main():
     """Main application entry point with error handling"""
     try:
-        app = StreamlinkMaski()
+        app = StreaMaski()
         app.run()
     except Exception as e:
         _log_error("Failed to start application", e)
