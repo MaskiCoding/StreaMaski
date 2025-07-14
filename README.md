@@ -1,6 +1,6 @@
 # 🎭 Streamlink Maski
 
-A lightweight desktop GUI for watching **ad-free Twitch streams** using Streamlink with a beautiful Rose Pine theme.
+A lightweight desktop GUI for watching **ad-free Twitch streams** using Streamlink with a beautiful Rose Pine theme and advanced stream management features.
 
 ## ✨ What it does
 
@@ -9,27 +9,61 @@ A lightweight desktop GUI for watching **ad-free Twitch streams** using Streamli
 - 🎥 **Direct media player streaming** - Opens streams in VLC, MPV, or your default video player
 - 🔄 **Instant stream switching** - Switch between streamers without delay
 - 💾 **Quick Swap slots** - Save up to 4 favorite streams for one-click access
-- � **Quality control** - Choose from 360p to 1080p60 based on your connection
+- 🔍 **Stream status checking** - Real-time online/offline indicators for saved streams
+- 🎯 **Quality control** - Choose from 360p to 1080p60 based on your connection
 - 🎭 **Beautiful interface** - Custom Rose Pine dark theme with smooth animations
 
 ## 🎮 Key Features
 
-- **🎬 Ad-free streaming** - Watch Twitch without any interruptions
-- **🚀 Quick stream switching** - Seamlessly switch between different streamers
-- **� Quick Swap management** - Save and organize your favorite streams
-- **🎯 Multiple quality options** - 360p, 480p, 720p, 1080p, 1080p60, and more
-- **🎭 Rose Pine theme** - Elegant dark interface with custom colors
-- **⚡ Optimized performance** - Fast startup, low memory usage, responsive UI
-- **� Smart error handling** - User-friendly error messages and automatic recovery
-- **💻 Windows integration** - High-resolution icons and taskbar optimization
+### 🎬 Core Streaming Features
+- **Ad-free streaming** - Watch Twitch without any interruptions
+- **Quick stream switching** - Seamlessly switch between different streamers
+- **Multiple quality options** - 360p, 480p, 720p, 1080p, 1080p60, and more
+- **Smart error handling** - User-friendly error messages and automatic recovery
 
-## 🆕 Version 2.3.0 Improvements
+### 🚀 Advanced Stream Management
+- **Quick Swap slots** - Save and organize your favorite streams (up to 4)
+- **Stream status indicators** - Real-time colored dots showing online/offline status
+  - 🟢 Green: Stream is online
+  - 🔴 Red: Stream is offline
+  - 🟡 Yellow: Status unknown
+  - 🟠 Gold: Currently checking status
+- **One-click status checking** - Check all saved streams simultaneously
+- **Automatic stream validation** - URL validation and normalization
 
-- **🖼️ High-resolution icons** - Crystal clear icons on Windows taskbar and alt-tab
-- **🎨 Enhanced Rose Pine theme** - More consistent and beautiful color scheme
-- **🔧 Better error handling** - Improved user feedback and error recovery
-- **⚡ Performance optimizations** - Faster startup and smoother operation
-- **🧹 Code improvements** - Cleaner, more maintainable codebase
+### 🎨 User Interface
+- **Rose Pine theme** - Elegant dark interface with custom colors
+- **Optimized performance** - Fast startup, low memory usage, responsive UI
+- **Windows integration** - High-resolution icons and taskbar optimization
+- **Consistent spacing** - Professional layout with standardized button sizes
+- **Hover effects** - Smooth transitions and visual feedback
+
+## 🆕 Version 3.0.0 Features
+
+### � Performance Optimizations
+- **Enhanced caching system** - Smart cache management with size limits
+- **Improved thread management** - Better concurrent stream checking
+- **Memory optimization** - Reduced memory footprint and better cleanup
+- **Faster startup** - Optimized initialization and loading times
+
+### 🔧 Code Quality Improvements
+- **Better error handling** - More specific exception handling with logging
+- **Resource management** - Proper cleanup and memory management
+- **Type safety** - Comprehensive type hints throughout codebase
+- **Maintainable architecture** - Better separation of concerns and modularity
+
+### 🔍 Enhanced Stream Status System
+- **Consistent button sizing** - All management buttons are 180px wide
+- **Improved spacing** - 15px gaps between all UI sections
+- **Better alignment** - Status indicators positioned perfectly in button corners
+- **Hover synchronization** - Status indicators match button hover states
+- **Professional layout** - Clean, modern design with attention to detail
+
+### 🔧 Technical Improvements
+- **Optimized code structure** - Clean, maintainable codebase with DRY principles
+- **Better error handling** - Comprehensive error messages and recovery
+- **Performance enhancements** - Faster startup and smoother operation
+- **Memory optimization** - Efficient resource usage and cleanup
 
 ## 📦 Installation & Usage
 
@@ -53,17 +87,29 @@ python main.py
 
 ## 🎮 How to Use
 
+### 🎬 Basic Streaming
 1. **Enter Twitch URL** - Paste any Twitch stream URL (e.g., `https://www.twitch.tv/streamer_name`)
 2. **Select Quality** - Choose from 360p to 1080p60 based on your internet speed
 3. **Click "Watch Stream"** - Stream opens in your default video player
-4. **Use Quick Swap** - Add streams to quick access slots for instant switching
-5. **Enjoy ad-free streaming!** 🎉
+4. **Enjoy ad-free streaming!** 🎉
+
+### 💾 Quick Swap Management
+1. **Add streams** - Click "Add to Quick Swap" to save current stream
+2. **Check status** - Click "Check Status" to see which streams are online
+3. **Visual indicators** - Colored dots show stream status:
+   - 🟢 **Green**: Stream is online
+   - 🔴 **Red**: Stream is offline  
+   - 🟡 **Yellow**: Status unknown
+   - 🟠 **Gold**: Currently checking
+4. **One-click access** - Click any Quick Swap button to instantly switch streams
+5. **Remove streams** - Click the ✕ button to remove streams from Quick Swap
 
 ### 💡 Pro Tips
-- **Quick Swap**: Save frequently watched streamers for one-click access
-- **Quality Selection**: Start with "best" and adjust if buffering occurs
-- **Stream Switching**: Use the switch button to change streams without stopping
-- **Keyboard Shortcuts**: Close the video player to return to the main interface
+- **Status checking**: Use "Check Status" to see which of your saved streamers are live
+- **Quality selection**: Start with "best" and adjust if buffering occurs
+- **Stream switching**: Use the switch button to change streams without stopping
+- **Quick Swap**: Save frequently watched streamers for instant access
+- **Keyboard shortcuts**: Close the video player to return to the main interface
 
 ## 🔧 Build Your Own Executable
 
@@ -72,7 +118,7 @@ python main.py
 pip install pyinstaller
 
 # Build executable with icon
-pyinstaller --onefile --windowed --icon=ghost_play_icon.ico --name="Streamlink-Maski" main.py
+pyinstaller --onefile --windowed --icon=Icon.ico --name="Streamlink-Maski" main.py
 ```
 
 ## 🎯 How It Works
@@ -98,37 +144,70 @@ The application features a beautiful **Rose Pine** dark theme with:
 
 - **Language**: Python 3.8+
 - **GUI Framework**: CustomTkinter
+- **HTTP Requests**: Requests library for stream status checking
 - **Streaming Engine**: Streamlink
 - **Theme**: Rose Pine color scheme
-- **Architecture**: Event-driven with async stream management
+- **Architecture**: Event-driven with async stream management and threading
 - **Platform**: Windows 10/11 (primary), macOS, Linux (community tested)
+
+### 🏗️ Architecture Highlights
+- **Modular Design**: Separate classes for different functionality
+- **Event-Driven**: Callback-based system for stream events
+- **Threaded Operations**: Non-blocking UI with background stream checking
+- **Caching System**: 60-second cache for stream status to reduce API calls
+- **Error Recovery**: Graceful handling of network and stream errors
 
 ## 📋 System Requirements
 
 - **Operating System**: Windows 10/11 (recommended), macOS, Linux
+- **Python**: 3.8+ (if running from source)
 - **Memory**: 50MB RAM during operation
 - **Storage**: 25MB free space (executable + settings)
 - **Dependencies**: 
   - [Streamlink](https://streamlink.github.io/) (required for streaming)
   - Video player (VLC, MPV, or system default)
-- **Internet**: Stable connection for streaming
+  - Internet connection for stream status checking
+- **Network**: Stable internet connection for streaming
 
 ## 🆘 Troubleshooting
 
+### 🚨 Common Issues
+
 **Stream won't start?**
-- Ensure Streamlink is installed and accessible
+- Ensure Streamlink is installed and accessible from command line
 - Check if the Twitch URL is valid and the stream is live
-- Try a different quality setting
+- Try a different quality setting (start with "best")
+- Verify your internet connection is stable
+
+**Status indicators not working?**
+- Check your internet connection
+- Some streams may have restricted API access
+- Status checking has a 60-second cache - wait and try again
+- Ensure the Twitch URLs are valid and properly formatted
 
 **Poor performance?**
 - Lower the stream quality (720p instead of 1080p)
 - Close other applications using bandwidth
 - Check your internet connection speed
+- Ensure video player is properly configured
 
 **Application crashes?**
-- Check if you have Python 3.8+ installed
+- Check if you have Python 3.8+ installed (source version)
 - Ensure all dependencies are properly installed
 - Check the console for error messages
+- Try running as administrator (Windows)
+
+### 🔧 Advanced Troubleshooting
+
+**Stream status shows as offline but stream is live?**
+- The stream might have just started (check again in a minute)
+- API might be temporarily unavailable
+- Try removing and re-adding the stream to Quick Swap
+
+**Video player doesn't open?**
+- Ensure you have a compatible video player installed (VLC recommended)
+- Check if Streamlink can access your video player
+- Try running `streamlink --version` in command prompt
 
 ## 🤝 Contributing
 

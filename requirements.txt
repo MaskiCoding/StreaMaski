@@ -1,1 +1,45 @@
+# Streamlink Maski v3.0.0 Requirements
+# Core dependencies for the application
+
+# GUI Framework
 customtkinter>=5.2.2
+
+# HTTP Requests for stream status checking
+requests>=2.31.0
+
+# Type checking support
+typing>=3.7.4
+
+# Built-in modules (no installation required)
+# json (built-in Python module)
+# threading (built-in Python module)
+# subprocess (built-in Python module)
+# tkinter (built-in Python module)
+# urllib.parse (built-in Python module)
+# re (built-in Python module)
+# time (built-in Python module)
+# os (built-in Python module)
+# enum (built-in Python module)
+# contextlib (built-in Python module)
+# weakref (built-in Python module)
+
+# Windows-specific (optional)
+# ctypes (built-in on Windows)
+
+# Development dependencies (optional)
+# pytest>=7.0.0
+
+# Build dependencies (for creating executables)
+pyinstaller>=6.0.0
+# black>=22.0.0
+# flake8>=4.0.0
+
+# Operating system interface (built-in, but listed for completeness)
+# os (built-in Python module)
+
+# Subprocess management (built-in, but listed for completeness)
+# subprocess (built-in Python module)
+
+# Optional: For development and building
+# PyInstaller for creating executables
+# pyinstaller>=5.0.0
