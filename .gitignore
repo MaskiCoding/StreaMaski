@@ -1,90 +1,28 @@
-# Streamlink Maski v3.0.0 .gitignore
-
 # Python
 __pycache__/
 *.py[cod]
-*$py.class
 *.so
-.Python
-build/
-dist/
 *.egg-info/
-*.egg
-
-# PyInstaller
-*.manifest
-# Keep our custom spec file
-#*.spec
-
-# PyInstaller build artifacts
-build/
-dist/
-*.toc
-*.log
-*.exe
-*.dll
-*.pyd
-*.so
-*.dylib
-
-# Release packages
-StreamlinkMaski_v*.zip
-StreamlinkMaski_v*/
 
 # Application specific
 settings.json
 settings.json.backup
 
-# Stream status cache (if implemented)
-stream_cache.json
-stream_cache.json.backup
-
-# Development and testing files
-test_*.py
-check_icon.py
-optimize_icon.py
-*_backup.ico
-*_optimized.ico
-
-# Performance profiling
-*.prof
-*.pstats
-
-# Development documentation (optional - uncomment to exclude)
-# REFACTORING_SUMMARY.md
-# OPTIMIZATION_SUMMARY.md
+# Build artifacts
+build/
+dist/
+*.exe
+*.zip
 
 # IDE
 .vscode/
 .idea/
 *.swp
-*~
 
-# OS generated files
+# OS
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
 Thumbs.db
 desktop.ini
 
 # Logs
 *.log
-*.log
-app.log
-streamlink.log
-
-# Environment files
-.env
-.env.local
-.env.*.local
-
-# Temporary files
-*.tmp
-*.temp
-~*
-
-# Windows specific
-*.lnk
